@@ -9,6 +9,8 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    # Android build cache (see https://developer.android.com/studio/build/build-cache.html)
+    - $HOME/.android/build-cache
     
 android:
   components:
