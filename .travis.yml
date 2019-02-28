@@ -61,6 +61,9 @@ matrix:
     env: PROJ_DIR="kotlin/admanager/InterstitialExample"
 
 script:
-  - pushd "$PROJ_DIR"
-  - ./gradlew build
-  - popd  
+  - CHANGES=$(git --no-pager diff --name-only $TRAVIS_COMMIT_RANGE)  
+  - if [[ -n "$(grep -E "(${PROJ_DIR}|\.travis\.yml)" <<< "$CHANGES")" ]]; then
+  -   pushd "$PROJ_DIR"
+  -   ./gradlew build
+  -   popd
+  - fi
