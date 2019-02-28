@@ -1,23 +1,40 @@
 if: branch = master
 
 language: android
-android:
-  components:
-    - tools
-    - platform-tools
-    - tools
 
-    # The BuildTools version used by your project
-    - build-tools-28.0.3
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    # Android SDK
+    - $HOME/android-sdk-dl
+    - $HOME/android-sdk
+    
+    # Gradle deps
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    
+    # Android build cache (see https://developer.android.com/studio/build/build-cache.html)
+    - $HOME/.android/build-cache
+    
+install:
+  # Download and unzip the Android SDK tools (if not already there thanks to the cache mechanism)
+  # Latest version available here: https://developer.android.com/studio/index.html#downloads
+  - if test ! -e $HOME/android-sdk-dl/sdk-tools.zip ; then curl https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip > $HOME/android-sdk-dl/sdk-tools.zip ; fi
+  - unzip -qq -n $HOME/android-sdk-dl/sdk-tools.zip -d $HOME/android-sdk
 
-    # The SDK version used to compile your project
-    - android-26
+  # Install or update Android SDK components (will not do anything if already up to date thanks to the cache mechanism)
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;28.0.3' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-26' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-28' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'extras;google;m2repository' > /dev/null
 
-licenses:
-    - 'android-sdk-license-.+'
-
-before_install:
-  - yes | sdkmanager "platforms;android-28"
+env:
+  global:
+    - ANDROID_HOME=$HOME/android-sdk
 
 matrix:
   include:
@@ -61,6 +78,9 @@ matrix:
     env: PROJ_DIR="kotlin/admanager/InterstitialExample"
 
 script:
-  - pushd "$PROJ_DIR"
-  - ./gradlew build
-  - popd  
+  - CHANGES=$(git --no-pager diff --name-only $TRAVIS_COMMIT_RANGE)  
+  - if [[ -n "$(grep -E "(${PROJ_DIR}|\.travis\.yml)" <<< "$CHANGES")" ]]; then
+      pushd "$PROJ_DIR";
+      ./gradlew build;
+      popd;
+    fi
