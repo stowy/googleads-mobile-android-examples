@@ -27,13 +27,13 @@ install:
   - yes | sdkmanager --licenses >/dev/null
 before_script:
   # set executable flag for gradle wrapper
-  - chmod +x gradlew
+  - chmod +x "${PROJ_DIR}/gradlew"
   # create dir for gradle settings
-  - mkdir -p $HOME/.gradle
+  - mkdir -p "${PROJ_DIR}/.gradle"
   # disable gradle daemon for current user
-  - echo "org.gradle.daemon=false" >> $HOME/.gradle/gradle.properties
+  - echo "org.gradle.daemon=false" >> "${PROJ_DIR}/.gradle/gradle.properties"
   # set gradle log format to plain
-  - echo "org.gradle.console=plain" >> $HOME/.gradle/gradle.properties
+  - echo "org.gradle.console=plain" >> "${PROJ_DIR}/.gradle/gradle.properties"
 
 matrix:
   include:
