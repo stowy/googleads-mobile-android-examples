@@ -1,7 +1,7 @@
 package com.google.android.gms.example.bannerexample
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Initialize the Mobile Ads SDK with an AdMob App ID.
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
+        MobileAds.initialize(this) {}
 
         // Create an ad request. If you're running this on a physical device, check your logcat to
         // learn how to enable test ads for it. Look for a line like this one:

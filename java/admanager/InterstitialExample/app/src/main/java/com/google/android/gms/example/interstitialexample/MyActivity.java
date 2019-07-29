@@ -17,7 +17,7 @@ package com.google.android.gms.example.interstitialexample;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,6 +32,7 @@ import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 public class MyActivity extends AppCompatActivity {
 
     private static final long GAME_LENGTH_MILLISECONDS = 3000;
+    private static final String AD_UNIT_ID = "/6499/example/interstitial";
 
     private PublisherInterstitialAd interstitialAd;
     private CountDownTimer countDownTimer;
@@ -49,7 +50,7 @@ public class MyActivity extends AppCompatActivity {
         // Create the InterstitialAd and set the adUnitId.
         interstitialAd = new PublisherInterstitialAd(this);
         // Defined in res/values/strings.xml
-        interstitialAd.setAdUnitId(getString(R.string.ad_unit_id));
+        interstitialAd.setAdUnitId(AD_UNIT_ID);
 
         interstitialAd.setAdListener(new AdListener() {
             @Override
@@ -60,11 +61,16 @@ public class MyActivity extends AppCompatActivity {
             @Override
             public void onAdLoaded() {
                 adIsLoading = false;
+                Toast.makeText(MyActivity.this, "onAdLoaded()", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 adIsLoading = false;
+                Toast.makeText(MyActivity.this,
+                        "onAdFailedToLoad() with error code: " + errorCode,
+                        Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -17,16 +17,16 @@ package com.google.android.gms.example.interstitialexample
 
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
-
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest
 import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd
 import kotlinx.android.synthetic.main.activity_my.*
 
 const val GAME_LENGTH_MILLISECONDS: Long = 3000
+const val AD_UNIT_ID = "/6499/example/interstitial"
 
 /**
  * Main Activity. Inflates main activity xml.
@@ -46,7 +46,7 @@ class MyActivity : AppCompatActivity() {
         // Create the InterstitialAd and set the adUnitId.
         mInterstitialAd = PublisherInterstitialAd(this)
         // Replace with your own ad unit id.
-        mInterstitialAd.adUnitId = "/6499/example/interstitial"
+        mInterstitialAd.adUnitId = AD_UNIT_ID
 
         mInterstitialAd.adListener = object : AdListener() {
             override fun onAdClosed() {
@@ -55,10 +55,16 @@ class MyActivity : AppCompatActivity() {
 
             override fun onAdLoaded() {
                 mAdIsLoading = false
+                Toast.makeText(this@MyActivity, "onAdLoaded()", Toast.LENGTH_SHORT).show()
             }
 
             override fun onAdFailedToLoad(errorCode: Int) {
                 mAdIsLoading = false
+                Toast.makeText(
+                    this@MyActivity,
+                    "onAdFailedToLoad() with error code: $errorCode",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 

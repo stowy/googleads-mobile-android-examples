@@ -2,9 +2,9 @@ package com.google.android.gms.example.interstitialexample
 
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
@@ -12,6 +12,7 @@ import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
 
 const val GAME_LENGTH_MILLISECONDS = 3000L
+const val AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,12 +26,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
+        MobileAds.initialize(this) {}
 
         // Create the InterstitialAd and set it up.
         mInterstitialAd = InterstitialAd(this).apply {
-            adUnitId = "ca-app-pub-3940256099942544/1033173712"
+            adUnitId = AD_UNIT_ID
             adListener = (object : AdListener() {
+                override fun onAdLoaded() {
+                    Toast.makeText(this@MainActivity, "onAdLoaded()", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onAdFailedToLoad(errorCode: Int) {
+                    Toast.makeText(this@MainActivity,
+                            "onAdFailedToLoad() with error code: $errorCode",
+                            Toast.LENGTH_SHORT).show()
+                }
+
                 override fun onAdClosed() {
                     startGame()
                 }
