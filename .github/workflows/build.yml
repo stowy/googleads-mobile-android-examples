@@ -16,7 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        project_dir: [ "java/advanced/BannerRecyclerViewExample", "java/advanced/APIDemo"]
+        project_dir: 
+          - "java/advanced/BannerRecyclerViewExample"
+          - "java/admob/BannerExample"
+          - "java/admob/InterstitialExample"
 
     steps:
       - name: Clone Repo
