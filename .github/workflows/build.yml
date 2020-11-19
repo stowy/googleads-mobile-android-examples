@@ -44,7 +44,6 @@ jobs:
               pushd {{ matrix.project_dir }};
               ./gradlew build;
               popd
-            fi
         
       - name: Check changes
         run: echo "Commit range $COMMIT_RANGE, Changes $CHANGES, Build check $BUILD_CHECK"
