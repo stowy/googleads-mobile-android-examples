@@ -44,7 +44,7 @@ jobs:
       - name: Build if needed
         if: contains(env.CHANGES, '.github/workflows/build.yml') || contains(env.CHANGES, matrix.project_dir)
         run: |
-          echo "Building ${{ matrix.project_dir }} due to changes $CHANGES"
+          echo "Building ${{ matrix.project_dir }} due to changes $CHANGES";
           pushd "${{ matrix.project_dir }}";
           ./gradlew build;
           popd;
