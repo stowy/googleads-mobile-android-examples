@@ -1,11 +1,22 @@
-workflow "Build" {
-  on = "push"
-  resolves = ["Test on Travis CI"]
-}
+name: Testing Workflow
 
-action "Test on Travis CI" {
-  uses = "travis-ci/actions@master"
-  secrets = [
-    ${{ secrets.TRAVIS_CI }},
-  ]
-}
+# Step 1: Choose the branch or branches you want to run this workflow
+on: 
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+ 
+jobs:
+  testing:
+    name: Build check
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build
+        uses: travis-ci/actions@master
+        with:
+          secrets: ${{ secrets.TRAVIS_CI }}
