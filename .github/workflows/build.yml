@@ -22,17 +22,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      
-      - name: Set commit range (push to the master branch, e.g. merge)
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: echo "COMMIT_RANGE="${{ github.event.before }}.."" >> $GITHUB_ENV
-        
-      - name: Set commit range (pull request)
-        if: github.event_name == 'pull_request'
-        run: echo "COMMIT_RANGE="HEAD~.."" >> $GITHUB_ENV
-        
-      - name: Set changes
-        run:  echo "CHANGES=$(git --no-pager diff --name-only $COMMIT_RANGE)" >> $GITHUB_ENV
         
   build:
     needs: setup
@@ -66,11 +55,22 @@ jobs:
         - "kotlin/admanager/InterstitialExample"
 
     steps:
-    - name: Build if needed
-      if: contains(env.CHANGES, '.github/workflows/build.yml') || contains(env.CHANGES, matrix.project_dir)
-      run: |
-        echo "Building ${{ matrix.project_dir }} due to changes $CHANGES";
-        pushd "${{ matrix.project_dir }}";
-        ./gradlew build;
-        popd;
+      - name: Set commit range (push to the master branch, e.g. merge)
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: echo "COMMIT_RANGE="${{ github.event.before }}.."" >> $GITHUB_ENV
+        
+      - name: Set commit range (pull request)
+        if: github.event_name == 'pull_request'
+        run: echo "COMMIT_RANGE="HEAD~.."" >> $GITHUB_ENV
+        
+      - name: Set changes
+        run:  echo "CHANGES=$(git --no-pager diff --name-only $COMMIT_RANGE)" >> $GITHUB_ENV
+      
+      - name: Build if needed
+        if: contains(env.CHANGES, '.github/workflows/build.yml') || contains(env.CHANGES, matrix.project_dir)
+        run: |
+          echo "Building ${{ matrix.project_dir }} due to changes $CHANGES";
+          pushd "${{ matrix.project_dir }}";
+          ./gradlew build;
+          popd;
 
