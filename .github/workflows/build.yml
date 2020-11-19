@@ -41,12 +41,11 @@ jobs:
       - name: Set changes
         run:  echo "CHANGES=$(git --no-pager diff --name-only $COMMIT_RANGE)" >> $GITHUB_ENV
       
-      - name: Build check
+      - name: Build if needed
         if: contains(env.CHANGES, '.github/workflows/build.yml') || contains(env.CHANGES, matrix.project_dir)
         run: |
+          echo "Building ${{ matrix.project_dir }} due to changes $CHANGES"
           pushd "${{ matrix.project_dir }}";
           ./gradlew build;
           popd;
-        
-      - name: Check changes
-        run: echo "Commit range $COMMIT_RANGE, Changes $CHANGES, Build check $BUILD_CHECK"
+
