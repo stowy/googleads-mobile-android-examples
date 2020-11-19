@@ -29,17 +29,17 @@ jobs:
       
       - name: Set commit range (push to the master branch, e.g. merge)
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: echo ::set-env name=COMMIT_RANGE::${{ github.event.before }}..""
+        run: echo "COMMIT_RANGE="${{ github.event.before }}.."" >> $GITHUB_ENV
         
       - name: Set commit range (pull request)
         if: github.event_name == 'pull_request'
-        run: echo ::set-env name=COMMIT_RANGE::"HEAD~.."
+        run: echo "COMMIT_RANGE="HEAD~.."" >> $GITHUB_ENV
         
       - name: Set changes
-        run:  echo ::set-env name=CHANGES=$(git --no-pager diff --name-only ${{ env.COMMIT_RANGE }})
+        run:  echo "CHANGES=$(git --no-pager diff --name-only $COMMIT_RANGE)" >> $GITHUB_ENV
         
       - name: Check changes
-        run: echo "Commit range ${{env.COMMIT_RANGE }} Changes ${{ env.CHANGES }}"
+        run: echo "Commit range $COMMIT_RANGE Changes $CHANGES"
         
       - name: build
         run: pushd {{ matrix.project_dir }}; ./gradlew build; popd;
