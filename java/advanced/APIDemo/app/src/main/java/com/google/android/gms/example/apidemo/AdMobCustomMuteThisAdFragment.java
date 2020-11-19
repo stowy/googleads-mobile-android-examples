@@ -18,8 +18,8 @@ package com.google.android.gms.example.apidemo;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,8 +98,7 @@ public class AdMobCustomMuteThisAdFragment extends Fragment {
      * @param adView the view to be populated
      */
     private void populateUnifiedNativeAdView(UnifiedNativeAd nativeAd, UnifiedNativeAdView adView) {
-        MediaView mediaView = adView.findViewById(R.id.ad_media);
-        adView.setMediaView(mediaView);
+        adView.setMediaView((MediaView) adView.findViewById(R.id.ad_media));
 
         adView.setHeadlineView(adView.findViewById(R.id.ad_headline));
         adView.setBodyView(adView.findViewById(R.id.ad_body));
@@ -111,6 +110,7 @@ public class AdMobCustomMuteThisAdFragment extends Fragment {
         adView.setAdvertiserView(adView.findViewById(R.id.ad_advertiser));
 
         ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
+        adView.getMediaView().setMediaContent(nativeAd.getMediaContent());
 
         if (nativeAd.getBody() == null) {
             adView.getBodyView().setVisibility(View.INVISIBLE);

@@ -17,16 +17,18 @@ package com.google.android.gms.example.interstitialexample;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 /**
  * Main Activity. Inflates main activity xml.
@@ -34,6 +36,7 @@ import com.google.android.gms.ads.MobileAds;
 public class MyActivity extends AppCompatActivity {
 
     private static final long GAME_LENGTH_MILLISECONDS = 3000;
+    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
 
     private InterstitialAd interstitialAd;
     private CountDownTimer countDownTimer;
@@ -47,18 +50,38 @@ public class MyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my);
 
         // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {}
+        });
 
         // Create the InterstitialAd and set the adUnitId.
         interstitialAd = new InterstitialAd(this);
         // Defined in res/values/strings.xml
-        interstitialAd.setAdUnitId(getString(R.string.ad_unit_id));
+        interstitialAd.setAdUnitId(AD_UNIT_ID);
 
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                startGame();
-            }
+    interstitialAd.setAdListener(
+        new AdListener() {
+          @Override
+          public void onAdLoaded() {
+            Toast.makeText(MyActivity.this, "onAdLoaded()", Toast.LENGTH_SHORT).show();
+          }
+
+          @Override
+          public void onAdFailedToLoad(LoadAdError loadAdError) {
+            String error =
+                String.format(
+                    "domain: %s, code: %d, message: %s",
+                    loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
+            Toast.makeText(
+                    MyActivity.this, "onAdFailedToLoad() with error: " + error, Toast.LENGTH_SHORT)
+                .show();
+          }
+
+          @Override
+          public void onAdClosed() {
+            startGame();
+          }
         });
 
         // Create the "retry" button, which tries to show an interstitial between game plays.

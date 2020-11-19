@@ -17,7 +17,7 @@
 package com.google.example.gms.nativeadvancedexample;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.VideoController;
 import com.google.android.gms.ads.VideoOptions;
@@ -36,6 +37,8 @@ import com.google.android.gms.ads.formats.MediaView;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import java.util.Locale;
 
 /**
@@ -44,7 +47,6 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private static final String ADMOB_AD_UNIT_ID = "ca-app-pub-3940256099942544/2247696110";
-    private static final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
 
     private Button refresh;
     private CheckBox startVideoAdsMuted;
@@ -57,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, ADMOB_APP_ID);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {}
+        });
 
         refresh = findViewById(R.id.btn_refresh);
         startVideoAdsMuted = findViewById(R.id.cb_start_muted);
@@ -81,10 +86,8 @@ public class MainActivity extends AppCompatActivity {
      * @param adView          the view to be populated
      */
     private void populateUnifiedNativeAdView(UnifiedNativeAd nativeAd, UnifiedNativeAdView adView) {
-        // Set the media view. Media content will be automatically populated in the media view once
-        // adView.setNativeAd() is called.
-        MediaView mediaView = adView.findViewById(R.id.ad_media);
-        adView.setMediaView(mediaView);
+        // Set the media view.
+        adView.setMediaView((MediaView) adView.findViewById(R.id.ad_media));
 
         // Set other ad assets.
         adView.setHeadlineView(adView.findViewById(R.id.ad_headline));
@@ -96,8 +99,9 @@ public class MainActivity extends AppCompatActivity {
         adView.setStoreView(adView.findViewById(R.id.ad_store));
         adView.setAdvertiserView(adView.findViewById(R.id.ad_advertiser));
 
-        // The headline is guaranteed to be in every UnifiedNativeAd.
+        // The headline and mediaContent are guaranteed to be in every UnifiedNativeAd.
         ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
+        adView.getMediaView().setMediaContent(nativeAd.getMediaContent());
 
         // These assets aren't guaranteed to be in every UnifiedNativeAd, so it's important to
         // check before trying to display them.
@@ -153,8 +157,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // This method tells the Google Mobile Ads SDK that you have finished populating your
-        // native ad view with this native ad. The SDK will populate the adView's MediaView
-        // with the media content from this native ad.
+        // native ad view with this native ad.
         adView.setNativeAd(nativeAd);
 
         // Get the video controller for the ad. One will always be provided, even if the ad doesn't
@@ -200,6 +203,12 @@ public class MainActivity extends AppCompatActivity {
             // OnUnifiedNativeAdLoadedListener implementation.
             @Override
             public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+                // If this callback occurs after the activity is destroyed, you must call
+                // destroy and return or you may get a memory leak.
+                if (isDestroyed()) {
+                    unifiedNativeAd.destroy();
+                    return;
+                }
                 // You must call destroy on old ads when you are done with them,
                 // otherwise you will have a memory leak.
                 if (nativeAd != null) {
@@ -227,14 +236,27 @@ public class MainActivity extends AppCompatActivity {
 
         builder.withNativeAdOptions(adOptions);
 
-        AdLoader adLoader = builder.withAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                refresh.setEnabled(true);
-                Toast.makeText(MainActivity.this, "Failed to load native ad: "
-                        + errorCode, Toast.LENGTH_SHORT).show();
-            }
-        }).build();
+    AdLoader adLoader =
+        builder
+            .withAdListener(
+                new AdListener() {
+                  @Override
+                  public void onAdFailedToLoad(LoadAdError loadAdError) {
+                    refresh.setEnabled(true);
+                    String error =
+                        String.format(
+                            "domain: %s, code: %d, message: %s",
+                            loadAdError.getDomain(),
+                            loadAdError.getCode(),
+                            loadAdError.getMessage());
+                    Toast.makeText(
+                            MainActivity.this,
+                            "Failed to load native ad with error " + error,
+                            Toast.LENGTH_SHORT)
+                        .show();
+                  }
+                })
+            .build();
 
         adLoader.loadAd(new AdRequest.Builder().build());
 

@@ -17,7 +17,7 @@ package com.google.android.gms.example.apidemo;
 
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +28,9 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.VideoController;
 import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
@@ -42,9 +42,7 @@ import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 import com.google.android.gms.ads.formats.NativeContentAd;
 import com.google.android.gms.ads.formats.NativeContentAdView;
 import com.google.android.gms.ads.formats.NativeCustomTemplateAd;
-
 import java.util.List;
-
 
 /**
  * The {@link DFPCustomControlsFragment} class demonstrates how to use custom controls with DFP
@@ -59,6 +57,9 @@ public class DFPCustomControlsFragment extends Fragment {
     private CheckBox contentAdsCheckbox;
     private CheckBox customTemplateAdsCheckbox;
     private CustomControlsView customControlsView;
+    private NativeAppInstallAd nativeAppInstallAd;
+    private NativeContentAd nativeContentAd;
+    private NativeCustomTemplateAd nativeCustomTemplateAd;
 
     public DFPCustomControlsFragment() {
     }
@@ -89,6 +90,23 @@ public class DFPCustomControlsFragment extends Fragment {
         });
 
         refreshAd();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (nativeAppInstallAd != null) {
+            nativeAppInstallAd.destroy();
+            nativeAppInstallAd = null;
+        }
+        if (nativeContentAd != null) {
+            nativeContentAd.destroy();
+            nativeContentAd = null;
+        }
+        if (nativeCustomTemplateAd != null) {
+            nativeCustomTemplateAd.destroy();
+            nativeCustomTemplateAd = null;
+        }
+        super.onDestroy();
     }
 
     /**
@@ -298,6 +316,14 @@ public class DFPCustomControlsFragment extends Fragment {
                     new NativeCustomTemplateAd.OnCustomTemplateAdLoadedListener() {
                         @Override
                         public void onCustomTemplateAdLoaded(NativeCustomTemplateAd ad) {
+                            if (isDetached()) {
+                                ad.destroy();
+                                return;
+                            }
+                            if (nativeCustomTemplateAd != null) {
+                                nativeCustomTemplateAd.destroy();
+                            }
+                            nativeCustomTemplateAd = ad;
                             FrameLayout frameLayout = getView().findViewById(R.id.fl_adplaceholder);
                             View adView = getLayoutInflater()
                                     .inflate(R.layout.ad_simple_custom_template, null);
@@ -320,6 +346,14 @@ public class DFPCustomControlsFragment extends Fragment {
             builder.forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
                 @Override
                 public void onAppInstallAdLoaded(NativeAppInstallAd ad) {
+                    if (isDetached()) {
+                        ad.destroy();
+                        return;
+                    }
+                    if (nativeAppInstallAd != null) {
+                        nativeAppInstallAd.destroy();
+                    }
+                    nativeAppInstallAd = ad;
                     FrameLayout frameLayout = getView().findViewById(R.id.fl_adplaceholder);
                     NativeAppInstallAdView adView = (NativeAppInstallAdView) getLayoutInflater()
                             .inflate(R.layout.ad_app_install, null);
@@ -334,6 +368,14 @@ public class DFPCustomControlsFragment extends Fragment {
             builder.forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
                 @Override
                 public void onContentAdLoaded(NativeContentAd ad) {
+                    if (isDetached()) {
+                        ad.destroy();
+                        return;
+                    }
+                    if (nativeContentAd != null) {
+                        nativeContentAd.destroy();
+                    }
+                    nativeContentAd = ad;
                     FrameLayout frameLayout = getView().findViewById(R.id.fl_adplaceholder);
                     NativeContentAdView adView = (NativeContentAdView) getLayoutInflater()
                             .inflate(R.layout.ad_content, null);
@@ -355,20 +397,32 @@ public class DFPCustomControlsFragment extends Fragment {
 
         builder.withNativeAdOptions(adOptions);
 
-        AdLoader adLoader = builder.withAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                refresh.setEnabled(true);
-                Toast.makeText(getActivity(), "Failed to load native ad: "
-                        + errorCode, Toast.LENGTH_SHORT).show();
-            }
-        }).build();
+    AdLoader adLoader =
+        builder
+            .withAdListener(
+                new AdListener() {
+                  @Override
+                  public void onAdFailedToLoad(LoadAdError loadAdError) {
+                    refresh.setEnabled(true);
+                    String error =
+                        String.format(
+                            "domain: %s, code: %d, message: %s",
+                            loadAdError.getDomain(),
+                            loadAdError.getCode(),
+                            loadAdError.getMessage());
+                    Toast.makeText(
+                            getActivity(), "Failed to load native ad: " + error, Toast.LENGTH_SHORT)
+                        .show();
+                  }
+                })
+            .build();
 
         adLoader.loadAd(new PublisherAdRequest.Builder().build());
 
         customControlsView.reset();
     }
 }
+
 
 
 

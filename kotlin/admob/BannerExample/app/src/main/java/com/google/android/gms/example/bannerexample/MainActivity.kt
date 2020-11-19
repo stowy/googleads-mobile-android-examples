@@ -1,46 +1,53 @@
 package com.google.android.gms.example.bannerexample
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
 
-        // Initialize the Mobile Ads SDK with an AdMob App ID.
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713")
+    // Initialize the Mobile Ads SDK with an AdMob App ID.
+    MobileAds.initialize(this) {}
 
-        // Create an ad request. If you're running this on a physical device, check your logcat to
-        // learn how to enable test ads for it. Look for a line like this one:
-        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
-        val adRequest = AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build()
+    // Set your test devices. Check your logcat output for the hashed device ID to
+    // get test ads on a physical device. e.g.
+    // "Use RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("ABCDEF012345"))
+    // to get test ads on this device."
+    MobileAds.setRequestConfiguration(
+      RequestConfiguration.Builder()
+        .setTestDeviceIds(listOf("ABCDEF012345"))
+        .build()
+    )
 
-        // Start loading the ad in the background.
-        ad_view.loadAd(adRequest)
-    }
+    // Create an ad request.
+    val adRequest = AdRequest.Builder().build()
 
-    // Called when leaving the activity
-    public override fun onPause() {
-        ad_view.pause()
-        super.onPause()
-    }
+    // Start loading the ad in the background.
+    ad_view.loadAd(adRequest)
+  }
 
-    // Called when returning to the activity
-    public override fun onResume() {
-        super.onResume()
-        ad_view.resume()
-    }
+  // Called when leaving the activity
+  public override fun onPause() {
+    ad_view.pause()
+    super.onPause()
+  }
 
-    // Called before the activity is destroyed
-    public override fun onDestroy() {
-        ad_view.destroy()
-        super.onDestroy()
-    }
+  // Called when returning to the activity
+  public override fun onResume() {
+    super.onResume()
+    ad_view.resume()
+  }
+
+  // Called before the activity is destroyed
+  public override fun onDestroy() {
+    ad_view.destroy()
+    super.onDestroy()
+  }
 }

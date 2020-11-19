@@ -13,7 +13,7 @@ the Google AdMob and Google Ad Manager components of the Google Mobile Ads SDK.
 # Google Mobile Ads SDK Developers forum
 
 To report SDK feature requests, bugs, and crashes or to browse SDK-related
-discusssions, please use our [Google Mobile Ads SDK Developers forum](https://groups.google.com/forum/#!forum/google-admob-ads-sdk).
+discussions, please use our [Google Mobile Ads SDK Developers forum](https://groups.google.com/forum/#!forum/google-admob-ads-sdk).
 The forum provides the latest SDK announcements and updates as well as
 technical SDK support for our [Android developers](https://groups.google.com/forum/#!categories/google-admob-ads-sdk/android).
 
@@ -54,9 +54,9 @@ documentation on using the Mobile Ads SDK.
 *   Rewarded Video:
     [Java](https://github.com/googleads/googleads-mobile-android-examples/tree/master/java/admanager/RewardedVideoExample),
     [Kotlin](https://github.com/googleads/googleads-mobile-android-examples/tree/master/kotlin/admanager/RewardedVideoExample)
-*   Custom Rendering:
-    [Java](https://github.com/googleads/googleads-mobile-android-examples/tree/master/java/admanager/CustomRenderingExample),
-    [Kotlin](https://github.com/googleads/googleads-mobile-android-examples/tree/master/kotlin/admanager/CustomRenderingExample)
+*   Native Ads:
+    [Java](https://github.com/googleads/googleads-mobile-android-examples/tree/master/java/admanager/NativeAdsExample),
+    [Kotlin](https://github.com/googleads/googleads-mobile-android-examples/tree/master/kotlin/admanager/NativeAdsExample)
 
 # Downloads
 

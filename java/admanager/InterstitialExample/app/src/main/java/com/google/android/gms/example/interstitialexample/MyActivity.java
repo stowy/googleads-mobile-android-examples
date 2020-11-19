@@ -17,12 +17,13 @@ package com.google.android.gms.example.interstitialexample;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 
@@ -32,6 +33,7 @@ import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 public class MyActivity extends AppCompatActivity {
 
     private static final long GAME_LENGTH_MILLISECONDS = 3000;
+    private static final String AD_UNIT_ID = "/6499/example/interstitial";
 
     private PublisherInterstitialAd interstitialAd;
     private CountDownTimer countDownTimer;
@@ -49,23 +51,32 @@ public class MyActivity extends AppCompatActivity {
         // Create the InterstitialAd and set the adUnitId.
         interstitialAd = new PublisherInterstitialAd(this);
         // Defined in res/values/strings.xml
-        interstitialAd.setAdUnitId(getString(R.string.ad_unit_id));
+        interstitialAd.setAdUnitId(AD_UNIT_ID);
 
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                startGame();
-            }
+    interstitialAd.setAdListener(
+        new AdListener() {
+          @Override
+          public void onAdClosed() {
+            startGame();
+          }
 
-            @Override
-            public void onAdLoaded() {
-                adIsLoading = false;
-            }
+          @Override
+          public void onAdLoaded() {
+            adIsLoading = false;
+            Toast.makeText(MyActivity.this, "onAdLoaded()", Toast.LENGTH_SHORT).show();
+          }
 
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                adIsLoading = false;
-            }
+          @Override
+          public void onAdFailedToLoad(LoadAdError loadAdError) {
+            adIsLoading = false;
+            String error =
+                String.format(
+                    "domain: %s, code: %d, message: %s",
+                    loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
+            Toast.makeText(
+                    MyActivity.this, "onAdFailedToLoad() with error: " + error, Toast.LENGTH_SHORT)
+                .show();
+          }
         });
 
         // Create the "retry" button, which tries to show an interstitial between game plays.
