@@ -17,9 +17,29 @@ jobs:
     strategy:
       matrix:
         project_dir: 
-          - "java/advanced/BannerRecyclerViewExample"
-          - "java/admob/BannerExample"
-          - "java/admob/InterstitialExample"
+        - "java/advanced/BannerRecyclerViewExample"
+        - "java/advanced/APIDemo"
+        - "java/admob/AdaptiveBannerExample"
+        - "java/admob/BannerExample"
+        - "java/admob/RewardedVideoExample"
+        - "java/admob/NativeAdvancedExample"
+        - "java/admob/InterstitialExample"
+        - "java/admanager/AdaptiveBannerExample"
+        - "java/admanager/BannerExample"
+        - "java/admanager/NativeAdsExample"
+        - "java/admanager/RewardedVideoExample"
+        - "java/admanager/InterstitialExample"
+        - "kotlin/advanced/APIDemo"
+        - "kotlin/admob/AdaptiveBannerExample"
+        - "kotlin/admob/BannerExample"
+        - "kotlin/admob/RewardedVideoExample"
+        - "kotlin/admob/NativeAdvancedExample"
+        - "kotlin/admob/InterstitialExample"
+        - "kotlin/admanager/AdaptiveBannerExample"
+        - "kotlin/admanager/BannerExample"
+        - "kotlin/admanager/NativeAdsExample"
+        - "kotlin/admanager/RewardedVideoExample"
+        - "kotlin/admanager/InterstitialExample"
 
     steps:
       - name: Clone Repo
