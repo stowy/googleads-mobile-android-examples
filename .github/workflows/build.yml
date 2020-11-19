@@ -1,0 +1,11 @@
+workflow "Build" {
+  on = "push"
+  resolves = ["Test on Travis CI"]
+}
+
+action "Test on Travis CI" {
+  uses = "travis-ci/actions@master"
+  secrets = [
+    ${{ secrets.TRAVIS_CI }},
+  ]
+}
