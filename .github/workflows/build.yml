@@ -45,5 +45,5 @@ jobs:
         run: echo "Commit range $COMMIT_RANGE, Changes $CHANGES, Build check $BUILD_CHECK"
         
       - name: build
-        if: ${{ [[ -n $BUILD_CHECK ]] }}
+        if: ${{ "[[ -n $BUILD_CHECK ]]" }}
         run: ./{{ matrix.project_dir }}/gradlew build
