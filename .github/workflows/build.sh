@@ -1,5 +1,6 @@
 #!/bin/bash
 # Script to build project if changes occur that contain project dir or build script.
+set -eo pipefail
 
 CHANGES=$(git --no-pager diff --name-only $COMMIT_RANGE);
 echo "Changes: ${CHANGES}, Commit range: ${COMMIT_RANGE}, Project dir: ${PROJ_DIR}";
