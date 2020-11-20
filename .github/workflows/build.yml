@@ -12,7 +12,7 @@ on:
 jobs:
   # Step 2: Build the samples
   build-java:
-    name: Build Java
+    name: Build
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
