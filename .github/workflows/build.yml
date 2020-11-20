@@ -58,7 +58,7 @@ jobs:
         run: echo "COMMIT_RANGE="HEAD~.."" >> $GITHUB_ENV
       
       - name: CHmod
-        run: sudo chmod +X .github/workflows/build.sh
+        run: sudo chmod u+r+x .github/workflows/build.sh
         
       - name: Build
         run: .github/workflows/build.sh
