@@ -1,3 +1,6 @@
+#!/bin/bash
+# Script to build project if changes occur that contain project dir or build script.
+
 CHANGES=$(git --no-pager diff --name-only $COMMIT_RANGE)
 if [[ -n "$(grep -E "(${PROJ_DIR}|\.travis\.yml)" <<< "$CHANGES")" ]]; then
   pushd "$PROJ_DIR";
