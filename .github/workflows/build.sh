@@ -1,8 +1,10 @@
 #!/bin/bash
 # Script to build project if changes occur that contain project dir or build script.
 
-CHANGES=$(git --no-pager diff --name-only $COMMIT_RANGE)
-if [[ -n "$(grep -E "(${PROJ_DIR}|\.travis\.yml)" <<< "$CHANGES")" ]]; then
+CHANGES=$(git --no-pager diff --name-only $COMMIT_RANGE);
+echo "Changes: ${CHANGES}";
+if [[ -n "$(grep -E "(${PROJ_DIR}|\.github\/workflows\)" <<< "$CHANGES")" ]]; then
+  echo "Building for ${PROJ_DIR}";
   pushd "$PROJ_DIR";
   ./gradlew build;
   popd;
