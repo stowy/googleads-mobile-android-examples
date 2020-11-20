@@ -19,4 +19,4 @@ export projects=(
 "java/admanager/InterstitialExample"
 )
 
-.github/workflows/build/build_all.sh;
+. .github/workflows/build/build_all.sh;

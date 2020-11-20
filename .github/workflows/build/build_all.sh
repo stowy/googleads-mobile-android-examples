@@ -7,5 +7,5 @@ export COMMIT_RANGE="${COMMIT_RANGE}";
 for project in "${projects[@]}"
 do
   export PROJ_DIR="${project}";
-  .github/workflows/build/build.sh;
+  . .github/workflows/build/build.sh;
 done
