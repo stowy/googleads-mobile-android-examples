@@ -1,6 +1,6 @@
 name: Build Status
 
-# Step 1: Choose the branch or branches you want to run this workflow
+# Step 1: Build on pull-requests or pushes to master
 on:
   push:
     branches:
@@ -10,6 +10,7 @@ on:
     - master
 
 jobs:
+  # Step 2: Build the java samples
   build-java:
     name: Build Java
     runs-on: ubuntu-latest
@@ -38,6 +39,7 @@ jobs:
         env:
           COMMIT_RANGE: ${{ env.COMMIT_RANGE }}
 
+  # Step 3: Build the kotlin samples
   build-kotlin:
     name: Build Kotlin
     runs-on: ubuntu-latest
